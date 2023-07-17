@@ -1,0 +1,39 @@
+﻿<!-- Copyright (c) Microsoft Corporation and Contributors. -->
+<!-- Licensed under the MIT License. -->
+
+<Page
+x:Class="Vehicle_manager.AddPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Vehicle_manager"
+    
+    Loaded="Page_Loaded"
+    >
+
+    <RelativePanel Margin="10, 10">
+        <RadioButtons Header="Icono:" RelativePanel.RightOf="richeditbox_vehicle_marca" Margin="20,0">
+                <RadioButton x:Name ="button_car_icon" IsChecked="True">
+                    <BitmapIcon Name="icon_car_selected" UriSource="ms-appx:///Assets/racecar.png" Width="20" Foreground="White" ShowAsMonochrome="True"/>
+                </RadioButton>
+                <RadioButton x:Name ="button_moto_icon">
+                    <BitmapIcon Name="icon_moto_selected" UriSource="ms-appx:///Assets/moto.png" Width="22" ShowAsMonochrome="True" Foreground="White"/>
+                </RadioButton>
+                <RadioButton x:Name ="button_truck_icon">
+                    <BitmapIcon Name="icon_truck_selected" UriSource="ms-appx:///Assets/truck.png" Width="20" ShowAsMonochrome="True" Foreground="White"/>
+                </RadioButton>
+        </RadioButtons>
+        <TextBox x:Name="richeditbox_vehicle_marca" FontSize="14" Width="200" Height="34"  PlaceholderText="Marca"/>
+        <TextBox x:Name="textbox_modelo" Margin="0,8,0,0" RelativePanel.Below="richeditbox_vehicle_marca" FontSize="14" Width="200" Height="34" PlaceholderText="Modelo"/>
+        <TextBox x:Name="textbox_matricula" Margin="0,8,0,0" RelativePanel.Below="textbox_modelo" FontSize="14" Width="200" Height="34"  PlaceholderText="Matricula"/>
+        <TextBox x:Name="textbox_km" Margin="0,8,0,0" RelativePanel.Below="textbox_matricula" FontSize="14" Width="200" Height="34"  PlaceholderText="Km"/>
+        <TextBox x:Name="textbox_bastidor" Margin="0,8,0,0" RelativePanel.Below="textbox_km" FontSize="14" Width="200" Height="34"  PlaceholderText="Bastidor"/>
+        <TextBox x:Name="textbox_ano" Margin="0,8,0,0" RelativePanel.Below="textbox_bastidor" FontSize="14" Width="200" Height="34"  PlaceholderText="Año de fabricación"/>
+        <Button x:Name="buton_vehicle_add" RelativePanel.Below="textbox_ano" Margin="0,8,0,0" Style="{StaticResource AccentButtonStyle}" Width="200" Height="34" Click="buton_vehicle_add_Click">
+            <Button.Content>
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE82E;"/>
+            </Button.Content>
+        </Button>
+        <Line X1="30" Y1="300" X2="170" Y2="300" StrokeThickness="1" Stroke="{StaticResource AccentFillColorDefaultBrush}">
+        </Line>
+    </RelativePanel>
+</Page>

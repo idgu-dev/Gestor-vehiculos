@@ -1,0 +1,47 @@
+﻿<!-- Copyright (c) Microsoft Corporation and Contributors. -->
+<!-- Licensed under the MIT License. -->
+
+<Window
+    x:Class="Vehicle_manager.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Vehicle_manager"
+    xmlns:Controls="using:Microsoft.UI.Xaml.Controls"
+    xmlns:Media="using:Microsoft.UI.Xaml.Media"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    mc:Ignorable="d"
+    Title=""
+    >
+    
+    <Window.SystemBackdrop>
+        <DesktopAcrylicBackdrop/>
+    </Window.SystemBackdrop>
+
+
+
+    <NavigationView x:Name="NavView"
+                    Loaded="NavView_Loaded"
+                    ItemInvoked="NavView_ItemInvoked"
+                    IsSettingsVisible="False"
+                    AlwaysShowHeader="False"
+                    IsBackButtonVisible="Collapsed"
+                    IsBackEnabled="False"
+                    
+                    >
+        <NavigationView.FooterMenuItems>
+            <NavigationViewItem Content ="Add" Tag="Vehicle_manager.AddPage" Icon="Add">
+            </NavigationViewItem>
+        </NavigationView.FooterMenuItems>
+
+
+
+        <Frame x:Name="ContentFrame">
+
+        </Frame>
+        </NavigationView>
+
+       
+   
+
+</Window>

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Gestor vehiculos (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Gestor vehiculos (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
