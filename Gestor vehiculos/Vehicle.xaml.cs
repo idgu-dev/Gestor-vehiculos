@@ -55,7 +55,7 @@ namespace Vehicle_manager
         }
 
 
-        private void semafoto_and_restantes(List<Vehicle_register> l)
+        private void semaforo_and_restantes(List<Vehicle_register> l)
         {
             //Seguro que hay otra forma mas optima pero esto funciona jiji
             List<Vehicle_register> rojos = new List<Vehicle_register>();
@@ -63,6 +63,12 @@ namespace Vehicle_manager
             List<Vehicle_register> resto = new List<Vehicle_register>();
             foreach (Vehicle_register v in l)
             {
+                if(v.IntervaloKm == 0)
+                {
+                    resto.Add(new Vehicle_register(v.Componente, v.Km, v.IntervaloKm, v.Precio, v.Sitio, v.Fecha.ToShortDateString(), v.Hecho,
+                        v.Notas, v.Archivos, v.Id, "", 0));
+                    continue;
+                }
                 int km_restantes = v.IntervaloKm + v.Km - Convert.ToInt32(textbox_km.Text);
                 if(km_restantes<0)
                 {
@@ -167,7 +173,7 @@ namespace Vehicle_manager
             if (ToggleSwitch_historial.IsOn == false)
             {
                 dataGrid.Columns[4].Visibility = Visibility.Visible;
-                semafoto_and_restantes(list);
+                semaforo_and_restantes(list);
             }
             else
             {
@@ -581,7 +587,7 @@ namespace Vehicle_manager
             if (ToggleSwitch_historial.IsOn == false)
             {
                 dataGrid.Columns[4].Visibility = Visibility.Visible;
-                semafoto_and_restantes(list);
+                semaforo_and_restantes(list);
             }
             else
             {
@@ -1192,7 +1198,7 @@ namespace Vehicle_manager
             if (ToggleSwitch_historial.IsOn == false)
             {
                 dataGrid.Columns[4].Visibility = Visibility.Visible;
-                semafoto_and_restantes(list);
+                semaforo_and_restantes(list);
             }
             else
             {
