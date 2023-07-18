@@ -26,6 +26,7 @@
     <UseWindowsForms>False</UseWindowsForms>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <PackageCertificateKeyFile>Gestor vehiculos_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <DefaultLanguage>Es</DefaultLanguage>
   </PropertyGroup>
   <ItemGroup>
     <Content Remove="Assets\BadgeLogo.scale-100.png" />

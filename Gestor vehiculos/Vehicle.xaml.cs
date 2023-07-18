@@ -22,9 +22,9 @@ using WinRT.Interop;
 using Gestor_vehiculos;
 using System.Linq;
 using ctWinUI = CommunityToolkit.WinUI.UI.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
+
 using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+
 using CommunityToolkit.WinUI.UI.Controls;
 using Microsoft.UI;
 using Windows.UI;
@@ -483,7 +483,7 @@ namespace Vehicle_manager
                 command.Parameters.AddWithValue("$componente", textbox_componente.Text);
                 command.Parameters.AddWithValue("$km", textbox_km_componente.Text);
                 command.Parameters.AddWithValue("$intervalokm", textbox_intervalo.Text);
-                command.Parameters.AddWithValue("$precio", textbox_precio.Text);
+                command.Parameters.AddWithValue("$precio", textbox_precio.Text.Replace(",","."));
                 command.Parameters.AddWithValue("$sitio", textbox_sitio.Text);
                 command.Parameters.AddWithValue("$fecha", datepicker_row.Date.DateTime.ToShortDateString());
                 command.Parameters.AddWithValue("$notas", textbox_anotacion.Text);
@@ -964,8 +964,6 @@ namespace Vehicle_manager
         private void dataGrid_CellEditEnded(object sender, ctWinUI.DataGridCellEditEndedEventArgs e)
         {
             Vehicle_register r = (Vehicle_register)dataGrid.SelectedItem;
-            Debug.WriteLine(r.Id.ToString()); 
-            Debug.WriteLine(r.Componente.ToString());
             using (var connection = new SqliteConnection(cs))
             {
                 connection.Open();
@@ -988,7 +986,7 @@ namespace Vehicle_manager
                 command.Parameters.AddWithValue("$componente", r.Componente);
                 command.Parameters.AddWithValue("$km", r.Km);
                 command.Parameters.AddWithValue("$intervalo_km", r.IntervaloKm);
-                command.Parameters.AddWithValue("$precio", r.Precio);
+                command.Parameters.AddWithValue("$precio", r.Precio.ToString().Replace(",", "."));
                 command.Parameters.AddWithValue("$sitio", r.Sitio);
                 command.Parameters.AddWithValue("$fecha", r.Fecha);
                 command.Parameters.AddWithValue("$hecho", r.Hecho);
