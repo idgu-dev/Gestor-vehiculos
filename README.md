@@ -2,6 +2,15 @@
 Si, es un guiño a Pimp my ride de MTV.
 
 ![alt text](https://github.com/idgu-dev/Gestor-vehiculos/blob/master/Demo/main.png)
+![alt text](https://github.com/idgu-dev/Gestor-vehiculos/blob/master/Demo/autosuggest.gif)
+![alt text](https://github.com/idgu-dev/Gestor-vehiculos/blob/master/Demo/date_picker.gif)
+![alt text](https://github.com/idgu-dev/Gestor-vehiculos/blob/master/Demo/delete.gif)
+![alt text](https://github.com/idgu-dev/Gestor-vehiculos/blob/master/Demo/done_row.gif)
+![alt text](https://github.com/idgu-dev/Gestor-vehiculos/blob/master/Demo/file.gif)
+![alt text](https://github.com/idgu-dev/Gestor-vehiculos/blob/master/Demo/historial_hechos.gif)
+![alt text](https://github.com/idgu-dev/Gestor-vehiculos/blob/master/Demo/search.gif)
+![alt text](https://github.com/idgu-dev/Gestor-vehiculos/blob/master/Demo/update_km.gif)
+
 
 ## Project Status
 
