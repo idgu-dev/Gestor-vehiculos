@@ -15,6 +15,8 @@ using Microsoft.UI.Windowing;
 using WinRT.Interop;
 using Microsoft.UI;
 using Gestor_vehiculos;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace Vehicle_manager
 {
@@ -29,7 +31,6 @@ namespace Vehicle_manager
         public MainWindow()
         {
             this.InitializeComponent();
-            this.AppWindow.SetIcon(null);
             ExtendsContentIntoTitleBar = true;
             SystemBackdrop = new MicaBackdrop() 
                         { Kind = MicaKind.BaseAlt };
@@ -188,6 +189,169 @@ namespace Vehicle_manager
             }
         }
 
+        private bool vehicle_exists(List<string> actual_vehicles, string marca, string modelo, string matricula)
+        {
+
+            foreach(string vehicle in actual_vehicles)
+            {
+                string[] v = vehicle.Split("||");
+                if (v[0].Equals(marca) && v[1].Equals(modelo) && v[2].Equals(matricula))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool register_exits(List<string> actual_registers, string matricula, string componente, string fecha, string km, string intervalo_km)
+        {
+            fecha = DateTime.Parse(fecha).ToShortDateString();
+            foreach(string register in actual_registers)
+            {
+                string[] v = register.Split("||");
+                if (v[0].Equals(matricula) && v[1].Equals(componente) && v[2].Equals(km) && v[3].Equals(intervalo_km) && v[4].Equals(fecha))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public async void import_old_tables()
+        {
+            var con = new SqliteConnection(cs);
+            con.Open();
+            var command = con.CreateCommand();
+            command.CommandText =
+            @"
+                SELECT Marca, Modelo, Matricula 
+                FROM Vehiculos
+            ";
+            List<string> actual_vehicles = new List<string>();
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    var name = reader.GetString(0);
+                    name += "||";
+                    name += reader.GetString(1);
+                    name += "||";
+                    name += reader.GetString(2);
+                    actual_vehicles.Add(name);
+                }
+            }
+
+            FileOpenPicker openPicker = new FileOpenPicker();
+            openPicker.ViewMode = PickerViewMode.Thumbnail;
+            openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            openPicker.FileTypeFilter.Add("*");
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hwnd);
+            StorageFile file = await openPicker.PickSingleFileAsync();
+            string old_dir;
+            if (file != null)
+            {
+                old_dir = file.Path;
+            }
+            else
+            {
+                return;
+            }
+            var con_old = new SqliteConnection("Data Source=" + old_dir);
+            con_old.Open();
+            var command_old = con_old.CreateCommand();
+            command_old.CommandText =
+            @"
+                SELECT Matricula, Marca, Modelo , Km, Bastidor, Fabricacion, Archivos
+                FROM Vehiculos
+            ";
+            using (var reader = command_old.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    if(vehicle_exists(actual_vehicles, reader.GetString(1), reader.GetString(2), reader.GetString(0))){
+                        continue;
+                    }
+                    command = con.CreateCommand();
+                    command.CommandText = @"
+                            INSERT INTO Vehiculos ('Matricula', 'Marca', 'Modelo', 'Km', 'Bastidor', 'Fabricacion', 'Icon', 'Archivos')
+                                    Values ($matricula, $marca, $modelo, $km, $bastidor, $fabricacion , $icon, $archivos);
+                     ";
+                    command.Parameters.AddWithValue("$matricula", reader.GetString(0).ToString());
+                    command.Parameters.AddWithValue("$marca", reader.GetString(1).ToString());
+                    command.Parameters.AddWithValue("$modelo", reader.GetString(2).ToString());
+                    command.Parameters.AddWithValue("$km", reader.GetString(3).ToString());
+                    command.Parameters.AddWithValue("$bastidor", reader.GetString(4).ToString());
+                    command.Parameters.AddWithValue("$fabricacion", reader.GetString(5).ToString());
+                    command.Parameters.AddWithValue("$archivos", reader.GetString(6).Replace("|", " || "));
+                    command.Parameters.AddWithValue("$icon", "racecar");
+                    command.ExecuteNonQuery();
+                }
+            }
+
+            command_old = con_old.CreateCommand();
+            command_old.CommandText =
+            @"
+                SELECT Matricula, Parte, CambioKm, IntervaloKm, Precio, Lugar, Fecha, Hecho, Anotacion, Archivo, Id
+                FROM Parametros
+            ";
+
+            List<string> list = new List<string>();
+            command = con.CreateCommand();
+            command.CommandText =
+            @"
+                SELECT Matricula, Componente, Km, IntervaloKm, Fecha
+                FROM Registros
+            ";
+
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    var name = reader.GetString(0);
+                    name += "||";
+                    name += reader.GetString(1);
+                    name += "||";
+                    name += reader.GetString(2);
+                    name += "||";
+                    name += reader.GetString(3);
+                    name += "||";
+                    name += reader.GetString(4);
+                    list.Add(name);
+                }
+            }
+
+            using (var reader = command_old.ExecuteReader())
+            {
+
+                while (reader.Read())
+                {
+                    if(register_exits(list, reader.GetString(0), reader.GetString(1), reader.GetString(6),reader.GetString(2), reader.GetString(3)))
+                    {
+                        continue;
+                    }
+                    command = con.CreateCommand();
+                    command.CommandText = @"
+                            INSERT INTO Registros ('Matricula', 'Componente', 'Km', 'IntervaloKm', 'Precio', 'Sitio', 'Fecha', 'Hecho', 'Notas', 'Archivos', 'Id')
+                                    Values ($matricula, $componente, $km, $intervalokm, $precio, $sitio , $fecha, $hecho, $notas, $archivos, $id);
+                        ";
+                    command.Parameters.AddWithValue("$matricula", reader.GetString(0).ToString());
+                    command.Parameters.AddWithValue("$componente", reader.GetString(1).ToString());
+                    command.Parameters.AddWithValue("$km", reader.GetString(2).ToString());
+                    command.Parameters.AddWithValue("$intervalokm", reader.GetString(3).ToString());
+                    command.Parameters.AddWithValue("$precio", reader.GetString(4).ToString());
+                    command.Parameters.AddWithValue("$sitio", reader.GetString(5).ToString());
+                    command.Parameters.AddWithValue("$fecha", reader.GetDateTime(6).ToShortDateString());
+                    command.Parameters.AddWithValue("$hecho", Convert.ToBoolean(reader.GetString(7)));
+                    command.Parameters.AddWithValue("$notas", reader.GetString(8).ToString());
+                    command.Parameters.AddWithValue("$archivos", reader.GetString(9).Replace("|", " || "));
+                    command.Parameters.AddWithValue("$id", reader.GetString(10).ToString());
+                    command.ExecuteNonQuery();
+                }
+            }
+            con_old.Close();
+            con.Close();
+        }
 
         private void CreateTableIfNotExists()
         {

@@ -35,5 +35,7 @@ x:Class="Vehicle_manager.AddPage"
         </Button>
         <Line X1="30" Y1="300" X2="170" Y2="300" StrokeThickness="1" Stroke="{StaticResource AccentFillColorDefaultBrush}">
         </Line>
+        <Button x:Name="buton_import"  Content="Import" RelativePanel.Below="buton_vehicle_add" Margin="0,30,0,0" Style="{StaticResource DefaultButtonStyle}" Width="200" Height="34" Click="buton_import_Click">
+        </Button>
     </RelativePanel>
 </Page>

@@ -120,5 +120,10 @@ namespace Vehicle_manager
             cs=mainWindow.cs;
             base.OnNavigatedTo(e);
         }
+
+        private void buton_import_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.import_old_tables();
+        }
     }
 }
