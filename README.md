@@ -9,7 +9,7 @@ In progress...
 
 ## About
 
-Cansado de no tener ni idea de qué le has hecho a tu moto, ni cuándo, ni por qué? ¡No te preocupes más! Llega TrackMyRide, la aplicación definitiva para Windows 10 y 11 que te permite llevar un seguimiento fácil y completo de todos los mantenimientos, reparaciones y modificaciones de tu vehículo.
+Es como fuuuuuuk, cuando hice el último cambio de aceite de la moto?, no me acuerdo. ¡No te preocupes más! Llega TrackMyRide, la aplicación definitiva para Windows 10 y 11 que te permite llevar un seguimiento fácil y completo de todos los mantenimientos, reparaciones y modificaciones de tu vehículo.
 
 ¡Imagina tener toda la información que necesitas al alcance de un click! Con TrackMyRide, puedes registrar cada detalle de tus servicios, desde cambios de aceite hasta mejoras personalizadas. Olvídate de las conjeturas y mantén un historial detallado de todo lo que has hecho en tu vehículo.
 
