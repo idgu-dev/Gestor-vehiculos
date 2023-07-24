@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Microsoft.UI.Xaml;
+using Windows.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
@@ -17,6 +18,7 @@ using Microsoft.UI;
 using Gestor_vehiculos;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.Diagnostics;
 
 namespace Vehicle_manager
 {
@@ -152,8 +154,18 @@ namespace Vehicle_manager
         private void NavView_ItemInvoked(NavigationView sender,
                                          NavigationViewItemInvokedEventArgs args)
         {
+            if( (args.InvokedItemContainer is null))
+            {
+                return;
+            }
             if (args.InvokedItemContainer.Tag != null)
             {
+                if (args.InvokedItemContainer.Tag.Equals("Vehicle_manager.Sync"))
+                {
+                    sync_other_db();
+                    return;
+                }
+
                 Type navPageType = Type.GetType(args.InvokedItemContainer.Tag.ToString());
                 string new_vehicle_selected = args.InvokedItemContainer.Content.ToString();
                 if (!new_vehicle_selected.Equals(actual_page))
@@ -162,6 +174,153 @@ namespace Vehicle_manager
                     NavView_Navigate(navPageType, args.RecommendedNavigationTransitionInfo, args.InvokedItemContainer.Content.ToString());
                 }
             }
+        }
+
+        private async void sync_other_db()
+        {
+            try { 
+                var con = new SqliteConnection(cs);
+                con.Open();
+                var command = con.CreateCommand();
+                command.CommandText =
+                @"
+                    SELECT Marca, Modelo, Matricula 
+                    FROM Vehiculos
+                ";
+                List<string> actual_vehicles = new List<string>();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var name = reader.GetString(0);
+                        name += "||";
+                        name += reader.GetString(1);
+                        name += "||";
+                        name += reader.GetString(2);
+                        actual_vehicles.Add(name);
+                    }
+                }
+
+                FileOpenPicker openPicker = new FileOpenPicker();
+                openPicker.ViewMode = PickerViewMode.Thumbnail;
+                openPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                openPicker.FileTypeFilter.Add("*");
+                var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+                WinRT.Interop.InitializeWithWindow.Initialize(openPicker, hwnd);
+                StorageFile file = await openPicker.PickSingleFileAsync();
+                string old_dir;
+                if (file != null)
+                {
+                    old_dir = file.Path;
+                }
+                else
+                {
+                    return;
+                }
+                //Esta es la base de datos que se va a integrar
+                var con_old = new SqliteConnection("Data Source=" + old_dir);
+                con_old.Open();
+                var command_old = con_old.CreateCommand();
+                command_old.CommandText =
+                @"
+                    SELECT Matricula, Marca, Modelo , Km, Bastidor, Fabricacion, Archivos
+                    FROM Vehiculos
+                ";
+                using (var reader = command_old.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if(vehicle_exists(actual_vehicles, reader.GetString(1), reader.GetString(2), reader.GetString(0))){
+                            continue;
+                        }
+                        command = con.CreateCommand();
+                        command.CommandText = @"
+                                INSERT INTO Vehiculos ('Matricula', 'Marca', 'Modelo', 'Km', 'Bastidor', 'Fabricacion', 'Icon', 'Archivos')
+                                        Values ($matricula, $marca, $modelo, $km, $bastidor, $fabricacion , $icon, $archivos);
+                         ";
+                        command.Parameters.AddWithValue("$matricula", reader.GetString(0).ToString());
+                        command.Parameters.AddWithValue("$marca", reader.GetString(1).ToString());
+                        command.Parameters.AddWithValue("$modelo", reader.GetString(2).ToString());
+                        command.Parameters.AddWithValue("$km", reader.GetString(3).ToString());
+                        command.Parameters.AddWithValue("$bastidor", reader.GetString(4).ToString());
+                        command.Parameters.AddWithValue("$fabricacion", reader.GetString(5).ToString());
+                        command.Parameters.AddWithValue("$archivos", reader.GetString(6));
+                        command.Parameters.AddWithValue("$icon", "racecar");
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                command_old = con_old.CreateCommand();
+                command_old.CommandText =
+                @"
+                    SELECT Matricula, Componente, Km, IntervaloKm, Precio, Sitio, Fecha, Hecho, Notas, Archivos
+                    FROM Registros
+                ";
+                List<string> list = new List<string>();
+                command = con.CreateCommand();
+                command.CommandText =
+                @"
+                    SELECT Matricula, Componente, Km, IntervaloKm, Fecha
+                    FROM Registros
+                ";
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var name = reader.GetString(0);
+                        name += "||";
+                        name += reader.GetString(1);
+                        name += "||";
+                        name += reader.GetString(2);
+                        name += "||";
+                        name += reader.GetString(3);
+                        name += "||";
+                        name += reader.GetString(4);
+                        list.Add(name);
+                    }
+                }
+
+                using (var reader = command_old.ExecuteReader())
+                {
+
+                    while (reader.Read())
+                    {
+                        if(register_exits(list, reader.GetString(0), reader.GetString(1), reader.GetString(6),reader.GetString(2), reader.GetString(3)))
+                        {
+                            continue;
+                        }
+                        command = con.CreateCommand();
+                        command.CommandText = @"
+                                INSERT INTO Registros ('Matricula', 'Componente', 'Km', 'IntervaloKm', 'Precio', 'Sitio', 'Fecha', 'Hecho', 'Notas', 'Archivos')
+                                        Values ($matricula, $componente, $km, $intervalokm, $precio, $sitio , $fecha, $hecho, $notas, $archivos);
+                            ";
+                        command.Parameters.AddWithValue("$matricula", reader.GetString(0).ToString());
+                        command.Parameters.AddWithValue("$componente", reader.GetString(1).ToString());
+                        command.Parameters.AddWithValue("$km", reader.GetString(2).ToString());
+                        command.Parameters.AddWithValue("$intervalokm", reader.GetString(3).ToString());
+                        command.Parameters.AddWithValue("$precio", reader.GetString(4).ToString());
+                        command.Parameters.AddWithValue("$sitio", reader.GetString(5).ToString());
+                        command.Parameters.AddWithValue("$fecha", reader.GetDateTime(6).ToShortDateString());
+                        command.Parameters.AddWithValue("$hecho", reader.GetBoolean(7));
+                        command.Parameters.AddWithValue("$notas", reader.GetString(8).ToString());
+                        command.Parameters.AddWithValue("$archivos", reader.GetString(9).Replace("|", " || "));
+                        command.ExecuteNonQuery();
+                    }
+                }
+                con_old.Close();
+                con.Close();
+
+            }catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            finally
+            {
+                NavView.MenuItems.Clear();
+                NavView_Loaded(null, null);
+            }
+
         }
 
 

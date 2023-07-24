@@ -32,6 +32,8 @@
         <NavigationView.FooterMenuItems>
             <NavigationViewItem Content ="Add" Tag="Vehicle_manager.AddPage" Icon="Add">
             </NavigationViewItem>
+            <NavigationViewItem Content ="Sync" Tag="Vehicle_manager.Sync" Icon="Sync" SelectsOnInvoked="False">
+            </NavigationViewItem>
         </NavigationView.FooterMenuItems>
 
 
