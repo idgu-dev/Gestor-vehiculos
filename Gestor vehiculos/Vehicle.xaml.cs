@@ -251,11 +251,19 @@ namespace Vehicle_manager
         private async void open_file(object sender, RoutedEventArgs e)
         {
             MenuFlyoutItem m = (MenuFlyoutItem)e.OriginalSource;
-            string vehicle_directory = Path.Join(working_dir, matricula, m.Text);
-            StorageFile f = await StorageFile.GetFileFromPathAsync(vehicle_directory);
-            _ = Windows.System.Launcher.LaunchFileAsync(f);
+            if(m.DataContext == null)
+            {
+                string vehicle_directory = Path.Join(working_dir, matricula, m.Text);
+                StorageFile f = await StorageFile.GetFileFromPathAsync(vehicle_directory);
+                _ = Windows.System.Launcher.LaunchFileAsync(f);
+            } else
+            {
+                Vehicle_register v = (Vehicle_register)m.DataContext;
+                string vehicle_directory = Path.Join(working_dir, matricula, v.Id.ToString(), m.Text);
+                StorageFile f = await StorageFile.GetFileFromPathAsync(vehicle_directory);
+                _ = Windows.System.Launcher.LaunchFileAsync(f);
+            }
         }
-
 
         private async void buton_delete_Click(object sender, RoutedEventArgs e)
         {
@@ -1095,7 +1103,6 @@ namespace Vehicle_manager
             {
                 return;
             }
-
         }
 
         private void dropdownbutton_archivos_row_Click_1(object sender, RoutedEventArgs e)
