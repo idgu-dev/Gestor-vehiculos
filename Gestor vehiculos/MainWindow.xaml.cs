@@ -105,6 +105,7 @@ namespace Vehicle_manager
                 @"
                     SELECT Marca, Modelo, Matricula, Icon 
                     FROM Vehiculos
+                    ORDER BY Marca
                 ";
                 using (var reader = command.ExecuteReader())
                 {
@@ -301,17 +302,13 @@ namespace Vehicle_manager
                 }
                 con_old.Close();
                 con.Close();
-
-            }catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
-            finally
-            {
                 NavView.MenuItems.Clear();
                 NavView_Loaded(null, null);
             }
-
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
 
@@ -341,7 +338,6 @@ namespace Vehicle_manager
 
         private bool vehicle_exists(List<string> actual_vehicles, string marca, string modelo, string matricula)
         {
-
             foreach(string vehicle in actual_vehicles)
             {
                 string[] v = vehicle.Split("||");
@@ -473,7 +469,6 @@ namespace Vehicle_manager
 
             using (var reader = command_old.ExecuteReader())
             {
-
                 while (reader.Read())
                 {
                     if(register_exits(list, reader.GetString(0), reader.GetString(1), reader.GetString(6),reader.GetString(2), reader.GetString(3)))
@@ -540,67 +535,6 @@ namespace Vehicle_manager
                     );
                 ";
             command.ExecuteNonQuery();
-            //var con_old = new SqliteConnection("Data Source=C:\\Users\\ivan\\Documents\\Proyectos\\Gestor vehiculos v3\\Files\\data.sqlite");
-            //con_old.Open();
-            //var command_old = con_old.CreateCommand();
-            //command_old.CommandText =
-            //@"
-            //    SELECT Matricula, Marca, Modelo , Km, Bastidor, Fabricacion, Archivos
-            //    FROM Vehiculos
-            //";
-            //using (var reader = command_old.ExecuteReader())
-            //{
-            //    while (reader.Read())
-            //    {
-            //        command = con.CreateCommand();
-            //        command.CommandText = @"
-            //                INSERT INTO Vehiculos ('Matricula', 'Marca', 'Modelo', 'Km', 'Bastidor', 'Fabricacion', 'Icon', 'Archivos')
-            //                        Values ($matricula, $marca, $modelo, $km, $bastidor, $fabricacion , $icon, $archivos);
-            //            ";
-            //        command.Parameters.AddWithValue("$matricula", reader.GetString(0).ToString());
-            //        command.Parameters.AddWithValue("$marca", reader.GetString(1).ToString());
-            //        command.Parameters.AddWithValue("$modelo", reader.GetString(2).ToString());
-            //        command.Parameters.AddWithValue("$km", reader.GetString(3).ToString());
-            //        command.Parameters.AddWithValue("$bastidor", reader.GetString(4).ToString());
-            //        command.Parameters.AddWithValue("$fabricacion", reader.GetString(5).ToString());
-            //        command.Parameters.AddWithValue("$archivos", reader.GetString(6).Replace("|", " || "));
-            //        command.Parameters.AddWithValue("$icon", "racecar");
-            //        Debug.WriteLine(reader.GetString(2).ToString());
-            //        command.ExecuteNonQuery();
-            //    }
-            //}
-
-            //command_old = con_old.CreateCommand();
-            //command_old.CommandText =
-            //@"
-            //    SELECT Matricula, Parte, CambioKm, IntervaloKm, Precio, Lugar, Fecha, Hecho, Anotacion, Archivo, Id
-            //    FROM Parametros
-            //";
-            //using (var reader = command_old.ExecuteReader())
-            //{
-            //    while (reader.Read())
-            //    {
-            //        command = con.CreateCommand();
-            //        command.CommandText = @"
-            //                INSERT INTO Registros ('Matricula', 'Componente', 'Km', 'IntervaloKm', 'Precio', 'Sitio', 'Fecha', 'Hecho', 'Notas', 'Archivos', 'Id')
-            //                        Values ($matricula, $componente, $km, $intervalokm, $precio, $sitio , $fecha, $hecho, $notas, $archivos, $id);
-            //            ";
-            //        command.Parameters.AddWithValue("$matricula", reader.GetString(0).ToString());
-            //        command.Parameters.AddWithValue("$componente", reader.GetString(1).ToString());
-            //        command.Parameters.AddWithValue("$km", reader.GetString(2).ToString());
-            //        command.Parameters.AddWithValue("$intervalokm", reader.GetString(3).ToString());
-            //        command.Parameters.AddWithValue("$precio", reader.GetString(4).ToString());
-            //        command.Parameters.AddWithValue("$sitio", reader.GetString(5).ToString());
-            //        command.Parameters.AddWithValue("$fecha", reader.GetDateTime(6).ToShortDateString());
-            //        command.Parameters.AddWithValue("$hecho", Convert.ToBoolean(reader.GetString(7)));
-            //        command.Parameters.AddWithValue("$notas", reader.GetString(8).ToString());
-            //        command.Parameters.AddWithValue("$archivos", reader.GetString(9).Replace("|", " || "));
-            //        command.Parameters.AddWithValue("$id", reader.GetString(10).ToString());
-            //        Debug.WriteLine(reader.GetString(2).ToString());
-            //        command.ExecuteNonQuery();
-            //    }
-            //}
-            //con_old.Close();
             con.Close();
         }
     }
