@@ -34,14 +34,11 @@ using Windows.UI;
 
 namespace Vehicle_manager
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class Vehicle : Page
     {
         private string matricula;
         public MainWindow mainWindow { get; set; }
-        private string working_dir = "C:\\Users\\ivan\\Documents\\Proyectos\\Gestor vehiculos v3\\Files";
+        private string working_dir;
         private string cs;
         private List<string> componentes_unique = new List<string>();
         private List<string> sitio_unique = new List<string>();

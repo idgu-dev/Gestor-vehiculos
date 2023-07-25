@@ -1,8 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation and Contributors.
-// Licensed under the MIT License.
-
-using Microsoft.UI.Xaml;
-using Windows.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
@@ -12,12 +8,7 @@ using Microsoft.UI.Composition.SystemBackdrops;
 using Windows.Storage.Pickers;
 using Windows.Storage;
 using System.IO;
-using Microsoft.UI.Windowing;
-using WinRT.Interop;
-using Microsoft.UI;
-using Gestor_vehiculos;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System.Diagnostics;
 
 namespace Vehicle_manager
