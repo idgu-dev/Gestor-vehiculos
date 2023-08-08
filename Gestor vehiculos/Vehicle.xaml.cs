@@ -44,6 +44,8 @@ namespace Vehicle_manager
         private List<string> sitio_unique = new List<string>();
         private List<string> suggestion_source = new List<string>();
         private List<Vehicle_register> registros = new List<Vehicle_register>();
+        private string filter_str = "";
+        private string search_str = "";
         
 
         public Vehicle()
@@ -94,6 +96,9 @@ namespace Vehicle_manager
 
         private void load_data_grid()
         {
+            filter_str = "";
+            search_str = "";
+            double coste_total = 0;
             List<Vehicle_register> list = new List<Vehicle_register>();
             var con = new SqliteConnection(cs);
             con.Open();
@@ -145,28 +150,9 @@ namespace Vehicle_manager
                         reader.GetString(4), reader.GetString(5), reader.GetBoolean(6),
                         notas, archivos, reader.GetInt32(9)
                         ));
+                    coste_total += reader.GetDouble(3);
                 }
             }
-            //for (int i = 0; i < 100000; i++)
-            //{
-            //    con = new SqliteConnection(cs);
-            //    con.Open();
-            //    command = con.CreateCommand();
-            //    command.CommandText = @"
-            //            INSERT INTO Registros ('Matricula', 'Componente', 'Km', 'IntervaloKm', 'Precio', 'Sitio', 'Fecha', 'Hecho', 'Notas')
-            //                    Values ($matricula, $componente, $km, $intervalokm, $precio, $sitio , $fecha, true, $notas);
-            //        ";
-            //    command.Parameters.AddWithValue("$matricula", matricula);
-            //    command.Parameters.AddWithValue("$componente", "componete" + i.ToString());
-            //    command.Parameters.AddWithValue("$km", 1000000);
-            //    command.Parameters.AddWithValue("$intervalokm", 22222);
-            //    command.Parameters.AddWithValue("$precio", 60);
-            //    command.Parameters.AddWithValue("$sitio", "sitio de ejemplo" + i.ToString());
-            //    command.Parameters.AddWithValue("$fecha", "2022/01/01");
-            //    command.Parameters.AddWithValue("$notas", "nota de mierda " + i.ToString());
-            //    var result = command.ExecuteNonQuery();
-
-            //}
             if (ToggleSwitch_historial.IsOn == false)
             {
                 dataGrid.Columns[4].Visibility = Visibility.Visible;
@@ -182,6 +168,7 @@ namespace Vehicle_manager
                 registros = list;
             }
             fill_suggestion_sources();
+            toggle_coste_total.OnContent = coste_total.ToString();
         }
 
          protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -557,6 +544,13 @@ namespace Vehicle_manager
             }
             command.Parameters.AddWithValue("$m", matricula);
             command.Parameters.AddWithValue("$busqueda", "%"+SearchBox.Text + "%");
+            filter_str = "(" + command.CommandText.Split("Where")[1].TrimEnd().Replace("\r\n", "") + ")";
+            filter_str = filter_str.Replace("$busqueda", "'%" + SearchBox.Text + "%'");
+            if (!string.IsNullOrEmpty(search_str))
+            {
+                command.CommandText += " AND " + search_str;
+            }
+            
 
             string notas;
             string archivos;
@@ -1012,15 +1006,6 @@ namespace Vehicle_manager
 
         }
 
-        private void button_group_by_componente_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void buton_search_componente_sitio_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             search_suggestion(sender, args, suggestion_source);
@@ -1140,6 +1125,11 @@ namespace Vehicle_manager
 
         private void buton_filter_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(textbox_filter_value.Text) || combobox_columna_filter.SelectedItem is null || combobox_type_filter.SelectedItem is null)
+            {
+                return;
+
+            }
             List<Vehicle_register> list = new List<Vehicle_register>();
             var con = new SqliteConnection(cs);
             con.Open();
@@ -1162,6 +1152,12 @@ namespace Vehicle_manager
             else
             {
                 command.CommandText += " AND Hecho=true";
+            }
+            search_str = "(" + command.CommandText.Split("Where")[1].TrimEnd().Replace("\r\n", "") + ")";
+            Debug.WriteLine(filter_str);
+            if (!string.IsNullOrEmpty(filter_str))
+            {
+                command.CommandText += " AND " + filter_str;
             }
             command.Parameters.AddWithValue("$m", matricula);
             //command.Parameters.AddWithValue("$comparacion", combobox_type_filter.SelectedItem);
@@ -1304,6 +1300,10 @@ namespace Vehicle_manager
                     e.Row.Background = new SolidColorBrush(Color.FromArgb(70, 255, 178, 50));
                 }
             }
+        }
+
+        private void toggle_coste_total_Toggled(object sender, RoutedEventArgs e)
+        {
         }
     }
 

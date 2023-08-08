@@ -183,6 +183,8 @@
             </CommandBar>
 
         </StackPanel>
+        <TextBlock Margin="10,18,0,0" RelativePanel.Below="buton_delete" RelativePanel.RightOf="stackpanel_datagrid_buttons" >Coste total:</TextBlock>
+        <ToggleSwitch x:Name="toggle_coste_total" Margin="10,33,0,0" RelativePanel.RightOf="stackpanel_datagrid_buttons" RelativePanel.Below="buton_delete" OffContent="" OnContent="" Toggled="toggle_coste_total_Toggled"></ToggleSwitch>
 
         <controls:DataGrid
               Grid.Row="1"
