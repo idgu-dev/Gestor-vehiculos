@@ -126,9 +126,9 @@
                     RelativePanel.Below="flyout_button_info"
                     Background="{StaticResource LayerOnMicaBaseAltFillColorDefault}">
 
-            <ToggleSwitch x:Name="ToggleSwitch_historial" Margin="8,-4,0,0" Header="" OffContent="Últimos" OnContent="Hechos" IsOn="False"  Width="1" Toggled="ToggleSwitch_historial_Toggled" />
+            <ToggleSwitch x:Name="ToggleSwitch_historial" Margin="8,-4,0,0" Header="" OffContent="Pendientes" OnContent="Hechos" IsOn="False"  Width="1" Toggled="ToggleSwitch_historial_Toggled" />
 
-            <Button Margin="-30,0,0,0" Width="60" Style="{StaticResource ButtonRevealStyle}">
+            <Button Margin="-20,0,0,0" Width="60" Style="{StaticResource ButtonRevealStyle}">
                 <Button.Content>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE71C;"/>
                 </Button.Content>
@@ -196,7 +196,6 @@
                 VerticalScrollBarVisibility="Visible"
                 RowBackground="Transparent"
                 AlternatingRowBackground="Transparent"
-                AlternatingRowForeground="White"
                 AreRowDetailsFrozen="False"
                 AreRowGroupHeadersFrozen="False"
                 AutoGenerateColumns="False"
@@ -204,7 +203,7 @@
                 CanUserReorderColumns="False"
                 CanUserResizeColumns="True"
                 ColumnHeaderHeight="40"
-                MaxColumnWidth="400"
+                MaxColumnWidth="2000"
                 FrozenColumnCount="0"
                 GridLinesVisibility="Horizontal"
                 HeadersVisibility="Column"

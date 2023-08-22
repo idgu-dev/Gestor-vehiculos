@@ -53,6 +53,7 @@ namespace Gestor_vehiculos
             appWindow.SetIcon("ms-appx:///Assets/artwork.ico");
 
             m_window.Activate();
+
         }
 
         private Window m_window;

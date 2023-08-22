@@ -88,6 +88,9 @@ namespace Vehicle_manager
                     }
                 }
             }
+            rojos.Sort((x, y) => x.Km_restantes.CompareTo(y.Km_restantes));
+            amarillos.Sort((x, y) => x.Km_restantes.CompareTo(y.Km_restantes));
+            resto.Sort((x, y) => x.Km_restantes.CompareTo(y.Km_restantes));
             rojos.AddRange(amarillos);
             rojos.AddRange(resto);
 
@@ -469,16 +472,24 @@ namespace Vehicle_manager
                 var command = con.CreateCommand();
                 command.CommandText = @"
                         INSERT INTO Registros ('Matricula', 'Componente', 'Km', 'IntervaloKm', 'Precio', 'Sitio', 'Fecha', 'Hecho', 'Notas')
-                                Values ($matricula, $componente, $km, $intervalokm, $precio, $sitio , $fecha, false, $notas);
+                                Values ($matricula, $componente, $km, $intervalokm, $precio, $sitio , $fecha, $hecho, $notas);
                     ";
                 command.Parameters.AddWithValue("$matricula", matricula);
                 command.Parameters.AddWithValue("$componente", textbox_componente.Text);
                 command.Parameters.AddWithValue("$km", textbox_km_componente.Text);
-                command.Parameters.AddWithValue("$intervalokm", textbox_intervalo.Text);
+                if(ToggleSwitch_historial.IsOn)
+                {
+                    command.Parameters.AddWithValue("$intervalokm", 0);
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("$intervalokm", textbox_intervalo.Text);
+                }
                 command.Parameters.AddWithValue("$precio", textbox_precio.Text.Replace(",","."));
                 command.Parameters.AddWithValue("$sitio", textbox_sitio.Text);
                 command.Parameters.AddWithValue("$fecha", datepicker_row.Date.DateTime.ToShortDateString());
                 command.Parameters.AddWithValue("$notas", textbox_anotacion.Text);
+                command.Parameters.AddWithValue("$hecho", ToggleSwitch_historial.IsOn);
                 var result = command.ExecuteNonQuery();
                 if(result == 1)
                 {
@@ -499,21 +510,6 @@ namespace Vehicle_manager
             {
                 show_error_dialog(ex.Message);
             }
-        }
-
-        private void MenuFlyoutItem_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void MenuFlyoutItem_Click_2(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void MenuFlyoutItem_Click_3(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
@@ -767,18 +763,6 @@ namespace Vehicle_manager
             sort_column(e);
         }
 
-        private void DataGrid_LoadingRowGroup(object sender, ctWinUI.DataGridRowGroupHeaderEventArgs e)
-        {
-
-        }
-
-        private void AppBarButton_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-
-
         private void search_suggestion(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args, List<string> data_source)
         {
             if(args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
@@ -886,7 +870,6 @@ namespace Vehicle_manager
             }
         }
 
-
         private void textbox_sitio_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             search_suggestion(sender, args, sitio_unique);
@@ -895,11 +878,6 @@ namespace Vehicle_manager
         private void textbox_sitio_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
             textbox_sitio.Text = args.SelectedItem.ToString();
-        }
-
-        private void dropdownbutton_archivos_row_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void AppBarButton_Click_2(object sender, RoutedEventArgs e)
@@ -993,16 +971,6 @@ namespace Vehicle_manager
                 command.Parameters.AddWithValue("$archivos", r.Archivos);
                 command.ExecuteNonQuery();
             }
-
-        }
-
-        private void datepicker_row_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void button_group_by_sitio_Click(object sender, RoutedEventArgs e)
-        {
 
         }
 
@@ -1209,18 +1177,6 @@ namespace Vehicle_manager
             }
         }
 
-        private void checkbox_row_Checked(object sender, RoutedEventArgs e)
-        {
-
-            
-
-        }
-
-        private void checkbox_row_Unchecked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void button_done_row_Click(object sender, RoutedEventArgs e)
         {
             Button c = (Button)sender;
@@ -1268,10 +1224,12 @@ namespace Vehicle_manager
             if (ToggleSwitch_historial.IsOn) 
             { 
                 dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[3].Visibility = Visibility.Collapsed;
             } 
             else 
             { 
                 dataGrid.Columns[0].Visibility= Visibility.Visible; 
+                dataGrid.Columns[3].Visibility= Visibility.Visible; 
             }
 
             load_data_grid();
@@ -1305,6 +1263,7 @@ namespace Vehicle_manager
         private void toggle_coste_total_Toggled(object sender, RoutedEventArgs e)
         {
         }
+
     }
 
 
